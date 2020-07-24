@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,6 +53,7 @@ public class BookController
     }
 
     // POST http://localhost:2019/books/book
+    @PreAuthorize("ADMIN")
     @PostMapping(value = "/book", consumes = "application/json")
     public ResponseEntity<?> addNewBook(@Valid @RequestBody Book newBook) throws
             URISyntaxException
@@ -73,6 +75,7 @@ public class BookController
     }
 
     // PUT http://localhost:2019/books/book/1
+    @PreAuthorize("ADMIN")
     @PutMapping(value = "/book/{bookid}",
             consumes = "application/json")
     public ResponseEntity<?> updateFullBook(
@@ -90,6 +93,7 @@ public class BookController
 
     // DELETE http://localhost:2019/books/book/1
     @DeleteMapping(value = "/book/{id}")
+    @PreAuthorize("ADMIN")
     public ResponseEntity<?> deleteBookById(
             @PathVariable
                     long id)
