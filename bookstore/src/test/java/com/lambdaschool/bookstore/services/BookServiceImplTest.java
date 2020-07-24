@@ -2,8 +2,10 @@ package com.lambdaschool.bookstore.services;
 
 import com.lambdaschool.bookstore.BookstoreApplication;
 import com.lambdaschool.bookstore.exceptions.ResourceNotFoundException;
+import com.lambdaschool.bookstore.models.Author;
 import com.lambdaschool.bookstore.models.Book;
 import com.lambdaschool.bookstore.models.Section;
+import com.lambdaschool.bookstore.models.Wrote;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -44,6 +45,9 @@ public class BookServiceImplTest
 
     @Autowired
     private SectionService sectionService;
+
+    @Autowired
+    private AuthorService authorService;
 
     @Before
     public void setUp() throws
@@ -87,12 +91,31 @@ public class BookServiceImplTest
         bookService.findBookById(26);
     }
 
+    @Test(expected = ResourceNotFoundException.class)
+    public void d_deleteNotFound()
+    {
+        bookService.delete(9999);
+    }
+
     // Post
     @Test
     public void e_save()
     {
         String title = "You Don't Know JavaScript";
         Book b2 = new Book(title, "9788489367012", 2007, sectionService.findSectionById(21));
+
+        Book newBook = bookService.save(b2);
+        assertNotNull(newBook);
+        assertEquals(newBook.getTitle(), title);
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void e_saveThrowAuthor()
+    {
+        Author a1 = new Author("John", "Mitchell");
+        String title = "You Don't Know JavaScript";
+        Book b2 = new Book(title, "9788489367012", 2007, sectionService.findSectionById(21));
+        b2.getWrotes().add(new Wrote(a1, b2));
 
         Book newBook = bookService.save(b2);
         assertNotNull(newBook);
@@ -115,6 +138,23 @@ public class BookServiceImplTest
     {
         String title = "You Don't Know JavaScript";
         Book b2 = new Book(title, "9788489367012", 2007, sectionService.findSectionById(21));
+        b2.setCopy(1);
+        b2.getWrotes().add(new Wrote(authorService.findAll().get(0), b2));
+        b2.setBookid(28);
+
+        Book newBook = bookService.update(b2, 28);
+        assertNotNull(newBook);
+        assertEquals(newBook.getTitle(), title);
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void f_updateFail()
+    {
+        Author a1 = new Author("John", "Mitchell");
+        String title = "You Don't Know JavaScript";
+        Book b2 = new Book(title, "9788489367012", 2007, sectionService.findSectionById(21));
+        b2.setCopy(1);
+        b2.getWrotes().add(new Wrote(a1, b2));
         b2.setBookid(28);
 
         Book newBook = bookService.update(b2, 28);

@@ -153,18 +153,41 @@ public class BookControllerTest
     public void addNewBook() throws
             Exception
     {
+        String apiUrl = "/books/book";
+        Book b3 = new Book("The Da Vinci Code", "9780307474278", 2009, bookList.get(0).getSection());
 
+        ObjectMapper mapper = new ObjectMapper();
+        String userString = mapper.writeValueAsString(b3);
+        Mockito.when(bookService.save(any(Book.class))).thenReturn(b3);
+
+        RequestBuilder rb = MockMvcRequestBuilders.post(apiUrl).accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON).content(userString);
+        mockMvc.perform(rb).andExpect(status().isCreated()).andDo(MockMvcResultHandlers.print());
     }
 
     @Test
-    public void updateFullBook()
+    public void updateFullBook() throws Exception
     {
+        String apiUrl = "/books/book/10";
+        Book b3 = new Book("The Da Vinci Code", "9780307474278", 2009, bookList.get(0).getSection());
+
+        ObjectMapper mapper = new ObjectMapper();
+        String userString = mapper.writeValueAsString(b3);
+
+        Mockito.when(bookService.save(any(Book.class))).thenReturn(b3);
+        RequestBuilder rb = MockMvcRequestBuilders.put(apiUrl).accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON).content(userString);
+        mockMvc.perform(rb).andExpect(status().isOk()).andDo(MockMvcResultHandlers.print());
     }
 
     @Test
     public void deleteBookById() throws
             Exception
     {
+        String apiUrl = "/books/book/10";
+
+        RequestBuilder rb = MockMvcRequestBuilders.delete(apiUrl);
+        mockMvc.perform(rb).andExpect(status().isOk()).andDo(MockMvcResultHandlers.print());
     }
 
 }
