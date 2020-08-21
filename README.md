@@ -50,7 +50,12 @@ Commit your code regularly and meaningfully. This helps both you (in case you ev
 Be prepared to demonstrate your understanding of this week's concepts by answering questions on the following topics. You might prepare by writing down your own answers before hand.
 
 1. Can you explain exception handling in your application?
+When errors occur in the api, a lot of data and exception paths may be provided. In order to make errors more readable and easier to track the location of the issue,
+we create custom exception handlers in the RestExceptionHandler.java and ResourceNotFoundException.java (though we could have as many of these Exception classes as we need).
 2. Can you explain your user authentication flow?
+In ResourceServerConfig class, I list groups of route endpoints in antMatchers, sometimes further specified by HttpMethod if needed, and then determine which roles
+should be allowed access to those endpoints. In order from most lax to restrictive: permitAll(), authenticated(), and hasAnyRole().
+We use OAuth2.0 for our Authentication which accesses tokens from the /login route once the user's credentials, client id, and client secret has been validated.
 3. Can you show me your unit tests and describe how they work?
 4. Can you show how you deployed your application to a cloud service with a persistent database?
 
