@@ -117,7 +117,7 @@
                 <artifactId>heroku-maven-plugin</artifactId>
                 <version>3.0.2</version>
                 <configuration>
-                    <appName>${project.build.finalName}.jar</appName>
+                    <appName>${project.build.finalName}</appName>
                     <includeTarget>false</includeTarget>
                     <includes>
                         <include>${project.build.directory}/${project.build.finalName}.jar</include>
