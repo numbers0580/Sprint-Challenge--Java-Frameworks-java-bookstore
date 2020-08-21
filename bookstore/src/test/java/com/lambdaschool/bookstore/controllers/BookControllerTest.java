@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -32,6 +33,8 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 
@@ -191,6 +194,29 @@ public class BookControllerTest
 
     @Test
     public void addNewBook() throws Exception {
+        String apiUrl = "/books/book";
+
+        Author writer = new Author("Peter", "Wood");
+        writer.setAuthorid(517);
+        Section s1 = new Section("Fiction");
+        s1.setSectionid(1);
+        Set<Wrote> written = new HashSet<>();
+        written.add(new Wrote(writer, new Book()));
+        Book manuscript = new Book("Shattered Factions", "2459635478521", 2018, s1);
+        manuscript.setWrotes(written);
+        manuscript.setBookid(2345);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String er = mapper.writeValueAsString(manuscript);
+
+        Mockito.when(bookService.save(any(Book.class))).thenReturn(manuscript);
+
+        RequestBuilder rb = MockMvcRequestBuilders.post(apiUrl)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(er);
+
+        mockMvc.perform(rb).andExpect(status().isCreated()).andDo(MockMvcResultHandlers.print());
     }
 
     @Test
@@ -199,5 +225,12 @@ public class BookControllerTest
 
     @Test
     public void deleteBookById() throws Exception {
+        String apiUrl = "/books/book/3";
+
+        RequestBuilder rb = MockMvcRequestBuilders.delete(apiUrl)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(rb).andExpect(status().is2xxSuccessful()).andDo(MockMvcResultHandlers.print());
     }
 }
