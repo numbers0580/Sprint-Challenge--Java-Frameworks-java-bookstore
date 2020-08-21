@@ -176,7 +176,7 @@ public class SeedData
 
         wrote = new HashSet<>();
         wrote.add(new Wrote(a2, new Book()));
-        Book b2 = new Book("Digital Fortess", "9788489367012", 2007, s1);
+        Book b2 = new Book("Digital Fortress", "9788489367012", 2007, s1);
         b2.setWrotes(wrote);
         b2 = bookService.save(b2);
 
